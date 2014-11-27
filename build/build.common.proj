@@ -1,32 +1,32 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <PropertyGroup>
-	<BUILD_NUMBER Condition="'$(BUILD_NUMBER)' == ''">2.2.2</BUILD_NUMBER>
-  </PropertyGroup>
+	<PropertyGroup>
+		<BUILD_NUMBER Condition="'$(BUILD_NUMBER)' == ''">2.2.2</BUILD_NUMBER>
+	</PropertyGroup>
 
-  <Target Name="VersionNumbers">
-	<Message Text="BUILD_NUMBER: $(BUILD_NUMBER)" Importance="high"/>
+	<Target Name="VersionNumbers">
+		<Message Text="BUILD_NUMBER: $(BUILD_NUMBER)" Importance="high"/>
 
-	<Split Input="$(BUILD_NUMBER)" Delimiter="." OutputSubString="2">
-	  <Output TaskParameter="ReturnValue" PropertyName="BuildCounter"/>
-	</Split>
+		<Split Input="$(BUILD_NUMBER)" Delimiter="." OutputSubString="2">
+			<Output TaskParameter="ReturnValue" PropertyName="BuildCounter" />
+		</Split>
 
-	<Message Text="BuildCounter: $(BuildCounter)" Importance="high"/>
+		<Message Text="BuildCounter: $(BuildCounter)" Importance="high"/>
 
-	<!-- Note, after some thought, we've decided this is the best place to keep the version number (not on TeamCity, not in the assemblies).     -->
-	<CreateProperty Value="2.3.$(BuildCounter)">
-	  <Output PropertyName="Version" TaskParameter="Value"/>
-	</CreateProperty>
+		<!-- Note, after some thought, we've decided this is the best place to keep the version number (not on TeamCity, not in the assemblies).     -->
+		<CreateProperty Value="2.3.$(BuildCounter)">
+			<Output PropertyName="Version" TaskParameter="Value"/>
+		</CreateProperty>
 
-	<Message Text="Version: $(Version)" Importance="high"/>
-  </Target>
+		<Message Text="Version: $(Version)" Importance="high"/>
+	</Target>
 
-  <ItemGroup>
-	<AssemblyInfoFiles Include="$(RootDir)/src/CommonAssemblyInfo.cs"/>
-  </ItemGroup>
-  <Target Name="SetAssemblyVersion" DependsOnTargets="VersionNumbers; StampReleaseFiles">
-	<StampAssemblies Version="$(Version)" InputAssemblyPaths="@(AssemblyInfoFiles)"/>
-  </Target>
+	<ItemGroup>
+		<AssemblyInfoFiles Include="$(RootDir)/**/CommonAssemblyInfo.cs"/>
+	</ItemGroup>
+	<Target Name="SetAssemblyVersion" DependsOnTargets="VersionNumbers">
+	  <StampAssemblies Version="$(Version)" InputAssemblyPaths="@(AssemblyInfoFiles)" />
+	</Target>
 
 
 
